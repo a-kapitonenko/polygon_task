@@ -36,7 +36,6 @@ function main() {
         });
     });
     canvas.addEventListener('mouseup', function(evt){
-        let flag = 0;
         mouse.x = 0;
         mouse.y = 0;
         polygons.forEach(function(item, i, arr){
@@ -44,19 +43,15 @@ function main() {
                 for(let j = 0; j < arr.length; j++){
                     if(i == j) continue
                     if(intOfPol(item, arr[j]) || overlappingOfPolygons(item, arr[j])){
-                        flag = 1;
-                        item.intersected.push(j);
-                        arr[j].intersected.push(i);
-                    }
-                }
-                if(!flag){
-                    if(item.intersected.length != 0){
-                        for(let g = 0; g < item.intersected.length; g++){
-                            arr[item.intersected[g]].intersected.splice(arr[item.intersected[g]].intersected.indexOf(i), 1);
+                        if(item.intersected.indexOf(j) == -1){
+                            item.intersected.push(j);
+                            arr[j].intersected.push(i);
                         }
-                        item.intersected = [];
+                    } else if(item.intersected.indexOf(j) >= 0){
+                        arr[j].intersected.splice(arr[j].intersected.indexOf(i), 1);
+                        item.intersected.splice(item.intersected.indexOf(j), 1);
                     }
-                }
+                } 
             }
             flag = 0;
             item.selected = false;

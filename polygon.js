@@ -43,7 +43,7 @@ function main() {
             if(item.selected){
                 for(let j = 0; j < arr.length; j++){
                     if(i == j) continue
-                    if(intOfPol(item, arr[j])){
+                    if(intOfPol(item, arr[j]) || overlappingOfPolygons(item, arr[j])){
                         flag = 1;
                         item.intersected.push(j);
                         arr[j].intersected.push(i);
@@ -157,6 +157,7 @@ function intOfPol(pol1, pol2) {
     }
     return 0;
 }
+
 function defEnds(x, y){
     let x1 = y1 = 0;
     for(let i = 0; i < x.length; i += 2){
@@ -184,4 +185,11 @@ function crossLine(x, y) {
     x1 = Math.round((b2 - b1) / (k1 - k2));
     y1 = Math.round(k1 * x1 + b1);
     return ((x[0] <= x1) && (x1 <= x[1])) && ((x[2] <= x1) && (x1 <= x[3]))
+}
+
+function overlappingOfPolygons(pol1, pol2) {
+    for(let i = 0; i < pol1.x.length; i++){
+        if(!inPolygon(pol1.x[i], pol1.y[i], pol2)) return 0;
+    }
+    return 1;
 }

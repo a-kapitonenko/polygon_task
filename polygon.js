@@ -42,7 +42,7 @@ function main() {
             if(item.selected){
                 for(let j = 0; j < arr.length; j++){
                     if(i == j) continue
-                    if(intOfPol(item, arr[j]) || overlappingOfPolygons(item, arr[j])){
+                    if(intOfPol(item, arr[j]) || overlappingOfPolygons(item, arr[j]) || overlappingOfPolygons(arr[j], item)){
                         if(item.intersected.indexOf(j) == -1){
                             item.intersected.push(j);
                             arr[j].intersected.push(i);

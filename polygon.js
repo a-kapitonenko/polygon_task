@@ -154,7 +154,7 @@ function intOfPol(pol1, pol2) {
 }
 
 function defEnds(x, y){
-    let x1 = y1 = 0;
+    let x1, y1;
     for(let i = 0; i < x.length; i += 2){
         if (x[i] > x[i+1]){
             x1 = x[i+1];
@@ -163,13 +163,20 @@ function defEnds(x, y){
             y1 = y[i+1];
             y[i+1] = y[i];
             y[i] = y1;     
-        }    
+        } else if(x[i] == x[i+1]){
+            if(y[i] > y[i+1]){
+                y1 = y[i+1];
+                y[i+1] = y[i];
+                y[i] = y1;   
+            }
+        }   
     }
     return x, y; 
 }
 
 function crossLine(x, y) {
     let k1, k2, b1, b2, x1, y1;
+    if(x[1] == x[0] || x[3] == x[2]) return crossVerticalLine(x, y);
     if(y[1] == y[0]) k1 = 0
     else k1 = (y[1] - y[0]) / (x[1] - x[0]);
     if(y[2] == y[3]) k2 = 0
@@ -187,4 +194,22 @@ function overlappingOfPolygons(pol1, pol2) {
         if(!inPolygon(pol1.x[i], pol1.y[i], pol2)) return 0;
     }
     return 1;
+}
+
+function crossVerticalLine(x, y){
+    let x1, y1, k, b;
+    if(x[1] == x[0] && x[3] == x[2]) return false
+    else if(x[1] == x[0]) {
+        x1 = x[0];
+        k = (y[3] - y[2]) / (x[3] - x[2]);
+        b = y[2] - k * x[2]; 
+    }
+    else if(x[2] == x[3]){ 
+        x1 = x[2]
+        k = (y[1] - y[0]) / (x[1] - x[0]);
+        b = y[0] - k * x[0]; 
+    }
+    y1 = Math.round(k * x1 + b);
+    return ((y[0] <= y1) && (y1 <= y[1])) && ((y[2] <= y1) && (y1 <= y[3])) &&
+           ((x[0] <= x1) && (x1 <= x[1])) && ((x[2] <= x1) && (x1 <= x[3]))
 }

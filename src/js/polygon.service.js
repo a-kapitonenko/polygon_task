@@ -30,6 +30,7 @@ class PolygonService {
         });
     }
     static intersectionOfPolygons(polygons, selectedItem) {
+        var time = performance.now();
         polygons.forEach((item, i, arr) => {
             if(selectedItem !== item) {
                 if(PolygonService.isPolygonsIntersects(selectedItem, item) || PolygonService.isPolygonsOverlapping(selectedItem, item)) {
@@ -41,24 +42,26 @@ class PolygonService {
                 }
             }
         });
+        time = performance.now() - time;
+        console.log('Время выполнения = ', time);
     }
     static isPolygonsIntersects(firstPolygon, secondPolygon) {
-        let previousVertex = secondPolygon.vertices.length - 1;
-        return secondPolygon.vertices.some((item, i, arr) => {
-            let line = [];
-            line.push(arr[previousVertex]);
-            line.push(item);
-            if (firstPolygon.isPolygonIntersects(line))
-                return true;
-            previousVertex = i;
-        });
+        if(firstPolygon.isPolygonWindowIntersects(secondPolygon)) {
+            let previousVertex = secondPolygon.vertices.length - 1;
+            return secondPolygon.vertices.some((item, i, arr) => {
+                let line = MathService.initializeLine(arr[previousVertex], item);
+                if (firstPolygon.isPolygonIntersects(line))
+                    return true;
+                previousVertex = i;
+            });
+        }
     }
     static isPolygonsOverlapping(firstPolygon, secondPolygon) {
         let isfirstPolygonInSecondPolygon, isSecondPolygonInFirstPolygon;
-        isfirstPolygonInSecondPolygon = firstPolygon.vertices.some((item, i, arr) => {
+        isfirstPolygonInSecondPolygon = firstPolygon.vertices.some((item) => {
             return secondPolygon.isPointInPolygon(item.x, item.y);
         });
-        isSecondPolygonInFirstPolygon = secondPolygon.vertices.some((item, i, arr) => {
+        isSecondPolygonInFirstPolygon = secondPolygon.vertices.some((item) => {
             return firstPolygon.isPointInPolygon(item.x, item.y);
         });
         return isfirstPolygonInSecondPolygon || isSecondPolygonInFirstPolygon;

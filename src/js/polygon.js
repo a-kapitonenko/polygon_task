@@ -1,4 +1,5 @@
 import MathService from "./math.service";
+import { WSAETIMEDOUT } from "constants";
 
 class Polygon {
     constructor(centerX, centerY, radius, numberOfAngles) {
@@ -60,24 +61,30 @@ class Polygon {
         let previousVertex = this._vertices.length - 1,
             value = false;
         this._vertices.forEach((item, i ,arr) => {
-            let isCoordinateYinPolygon = () => {
-                return ((item.y <= y) && (y < arr[previousVertex].y)) || ((arr[previousVertex].y <= y) && (y < item.y))
-            };
-            let isCoordinateXinPolygon = () => {
-                return x > (arr[previousVertex].x - item.x) * (y - item.y) / (arr[previousVertex].y - item.y) + item.x
-            }
-            if(isCoordinateYinPolygon() && isCoordinateXinPolygon())
+            let line = MathService.initializeLine(arr[previousVertex], item),
+                isCoordinateYinPolygon = MathService.isYBelongsLine(y, line),
+                isCoordinateXinPolygon = MathService.isPointWithinTheBorder(x, y, line);
+            if(isCoordinateYinPolygon && isCoordinateXinPolygon)
                 value = !value;
             previousVertex = i;
         });
         return value;
     }
+    isPolygonWindowIntersects(polygon) {
+        let topBoard = 0,
+            bottomBoard = Math.floor(this._vertices.length / 2),
+            rightBoard = Math.round(bottomBoard / 2),
+            leftBoard = this._vertices.length - rightBoard,
+            window = MathService.initializeRectangle(this._vertices[topBoard], this._vertices[rightBoard], this._vertices[bottomBoard], this._vertices[leftBoard]);
+        return polygon.vertices.some((item) => {
+            if(MathService.isPointWithinTheWindow(item, window))
+                return true;
+        });
+    }
     isPolygonIntersects(secondLine) {
         let previousVertex = this._vertices.length - 1;
         return this._vertices.some((item, i ,arr) => {
-            let line = [];
-            line.push(arr[previousVertex]);
-            line.push(item);
+            let line = MathService.initializeLine(arr[previousVertex], item);
             if(MathService.isLinesCross(line, secondLine))
                 return true;
             previousVertex = i;

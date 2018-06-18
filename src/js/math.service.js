@@ -44,9 +44,35 @@ class MathService {
         return line[0].y - slope * line[0].x;
     }
     static isPointBelongsLine(x, y, line) {
-        let isXBelongsLine = (line[0].x <= x) && (x <= line[1].x) || (line[1].x <= x  )&& (x <= line[0].x),
-            isYBelongsLine = (line[0].y <= y) && (y <= line[1].y) || (line[1].y <= y ) && (y <= line[0].y);
+        let isXBelongsLine =  MathService.isXBelongsLine(x, line),
+            isYBelongsLine =  MathService.isYBelongsLine(y, line);
         return isXBelongsLine && isYBelongsLine;
+    }
+    static isXBelongsLine (x, line) {
+        return (line[0].x <= x) && (x <= line[1].x) || (line[1].x <= x  )&& (x <= line[0].x);
+    }
+    static isYBelongsLine (y, line) {
+        return (line[0].y <= y) && (y <= line[1].y) || (line[1].y <= y ) && (y <= line[0].y);
+    }
+    static initializeLine(firstVertex, secondVertex) {
+        let line = [];
+        line.push(firstVertex);
+        line.push(secondVertex);
+        return line;
+    }
+    static isPointWithinTheBorder(x, y, line) {
+        return x > (line[0].x - line[1].x) * (y - line[1].y) / (line[0].y - line[1].y) + line[1].x;
+    }
+    static isPointWithinTheWindow(point, window) { 
+        return point < window[0] && point < window[1] && point > window[2] && point > window[3];
+    }
+    static initializeRectangle(firstVertex, secondVertex, thirdVertex, fourthVertex) {
+        let rectangle = [];
+        rectangle.push(firstVertex);
+        rectangle.push(secondVertex);
+        rectangle.push(thirdVertex);
+        rectangle.push(fourthVertex);
+        return rectangle;
     }
 }
 

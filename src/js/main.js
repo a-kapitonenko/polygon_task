@@ -1,11 +1,11 @@
-import Polygon from './polygon';
+import Mouse from './mouse';
 import SelectService from './select.service';
 import PolygonService from './polygon.service';
 
 window.onload = () => {
     let canvas = document.getElementById("canvas"),
         ctx = canvas.getContext('2d'),
-        mouse = { x: 0, y: 0 },
+        mouse = new Mouse(0 ,0),
         selectService = new SelectService();
     canvas.setAttribute('height',window.innerHeight - 20);
     canvas.setAttribute('width',window.innerWidth - 20);
@@ -15,7 +15,7 @@ window.onload = () => {
     canvas.addEventListener('mousedown', (evt) => {
         mouse.x = evt.clientX;
         mouse.y = evt.clientY;
-        polygons.forEach((item) => {
+        polygons.some((item) => {
             if(item.isPointInPolygon(mouse.x, mouse.y, item))
                 selectService.selectedItem = item;
         });

@@ -64,7 +64,7 @@ class PolygonService {
         return isfirstPolygonInSecondPolygon || isSecondPolygonInFirstPolygon;
     }
     static movePolygon(polygon, dx, dy) {
-        polygon.verti
+        polygon.move(dx, dy);
     }
 }
 

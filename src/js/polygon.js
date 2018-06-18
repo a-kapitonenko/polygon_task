@@ -24,10 +24,6 @@ class Polygon {
     get intersections() {
         return this._intersections;
     }
-
-    set centerPoint(point) {
-        [this._centerPoint.x, this._centerPoint.y] = point;
-    }
     set isIntersected(value) {
         this._isIntersected = value;
     }
@@ -99,6 +95,14 @@ class Polygon {
             if(!this._intersections.length) 
                 this._isIntersected = false;
         }
+    }
+    move(dx, dy) {
+        this._vertices.forEach((item) => {
+            item.x += dx;
+            item.y += dy;
+        })
+        this._centerPoint.x += dx;
+        this._centerPoint.y += dy;
     }
 };
 

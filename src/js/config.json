@@ -1,0 +1,18 @@
+{
+    "polygon": {
+        "numberOfPolygons": 6,
+        "vertices": {
+            "minNumber": 3,
+            "maxNumber": 6
+        },
+        "firstPoint": {
+            "X": 50,
+            "Y": 50
+        },
+        "centerSpacing": 100,
+        "radius": {
+            "min": 25,
+            "max": 40
+        }
+    }
+}

@@ -1,7 +1,7 @@
 import MathService from "./math.service";
 import Polygon from "./polygon";
 
-var config = require('./config.json');
+var config = require('../config.json');
 
 class PolygonService {
     static initializePolygons() {
@@ -30,7 +30,6 @@ class PolygonService {
         });
     }
     static intersectionOfPolygons(polygons, selectedItem) {
-        var time = performance.now();
         polygons.forEach((item, i, arr) => {
             if(selectedItem !== item) {
                 if(PolygonService.isPolygonsIntersects(selectedItem, item) || PolygonService.isPolygonsOverlapping(selectedItem, item)) {
@@ -42,8 +41,6 @@ class PolygonService {
                 }
             }
         });
-        time = performance.now() - time;
-        console.log('Время выполнения = ', time);
     }
     static isPolygonsIntersects(firstPolygon, secondPolygon) {
         if(firstPolygon.isPolygonWindowIntersects(secondPolygon)) {

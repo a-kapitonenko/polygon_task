@@ -1,5 +1,4 @@
 import MathService from "./math.service";
-import { WSAETIMEDOUT } from "constants";
 
 class Polygon {
     constructor(centerX, centerY, radius, numberOfAngles) {

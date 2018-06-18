@@ -10,8 +10,8 @@ class MathService {
         slopeSecondLine = MathService.slope(secondLine);
         if(slopeFirstLine === slopeSecondLine)
             return false;
-        coeffFirstLine =  MathService.coeffLine(fistLine, slopeFirstLine);
-        coeffSecondLine =  MathService.coeffLine(secondLine, slopeSecondLine);
+        coeffFirstLine = MathService.coeffLine(fistLine, slopeFirstLine);
+        coeffSecondLine = MathService.coeffLine(secondLine, slopeSecondLine);
         x = Math.round((coeffSecondLine - coeffFirstLine) / (slopeFirstLine - slopeSecondLine));
         y = Math.round(slopeFirstLine * x + coeffFirstLine);
         return MathService.isPointBelongsLine(x, y, fistLine) && MathService.isPointBelongsLine(x, y, secondLine)

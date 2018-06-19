@@ -1,71 +1,74 @@
-import MathService from "./math.service";
+import * as MathService from "./math.service";
 import Polygon from "./polygon";
 
 var config = require('../config.json');
+   
+export function initializePolygons() {
+    const polygons = [];
+    const numberOfPolygons = config.polygon.numberOfPolygons;
+    const minNumberOfVertices = config.polygon.vertices.minNumber;
+    const maxNumberOfVertices = config.polygon.vertices.maxNumber;
+    const centerSpacing = config.polygon.centerSpacing;
 
-class PolygonService {
-    static initializePolygons() {
-        let polygons = [],
-            centerX = config.polygon.firstPoint.X,
-            centerY = config.polygon.firstPoint.Y,
-            numberOfPolygons = config.polygon.numberOfPolygons,
-            minNumberOfVertices = config.polygon.vertices.minNumber,
-            maxNumberOfVertices = config.polygon.vertices.maxNumber,
-            centerSpacing = config.polygon.centerSpacing;
-        for (let i = 0; i < numberOfPolygons; i++) {
-            let radius = MathService.getRandomArbitrary(config.polygon.radius.min, config.polygon.radius.max),
-                numberOfVertices = MathService.getRandomArbitrary(minNumberOfVertices, maxNumberOfVertices);
-                if(i)
-                    centerY += centerSpacing; 
-            let polygon = new Polygon(centerX, centerY, radius, numberOfVertices);
-            polygon.initialize();
-            polygons.push(polygon);
-        }
-        return polygons;
+    const centerX = config.polygon.firstPoint.X;
+    let centerY = config.polygon.firstPoint.Y;
+
+    for (let i = 0; i < numberOfPolygons; i++) {
+        const radius = MathService.getRandomArbitrary(config.polygon.radius.min, config.polygon.radius.max);
+        const numberOfVertices = MathService.getRandomArbitrary(minNumberOfVertices, maxNumberOfVertices);
+        const polygon = new Polygon(centerX, centerY, radius, numberOfVertices);
+
+        polygons.push(polygon);
+        centerY += centerSpacing; 
     }
-    static drawPolygons(polygons, canvas, ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        polygons.forEach((item) => {
-            item.draw(ctx);
-        });
-    }
-    static intersectionOfPolygons(polygons, selectedItem) {
-        polygons.forEach((item, i, arr) => {
-            if(selectedItem !== item) {
-                if(PolygonService.isPolygonsIntersects(selectedItem, item) || PolygonService.isPolygonsOverlapping(selectedItem, item)) {
-                    selectedItem.addIntersection(i);
-                    item.addIntersection(arr.indexOf(selectedItem));
-                } else {
-                    selectedItem.deleteIntersection(i);
-                    item.deleteIntersection(arr.indexOf(selectedItem));
-                }
+
+    return polygons;
+}
+
+export function drawPolygons(polygons, canvas, ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    polygons.forEach((item) => {
+        item.draw(ctx);
+    });
+}
+
+export function intersectionOfPolygons(polygons, selectedItem) {
+    polygons.forEach((item) => {
+        if (selectedItem !== item) {
+            if (isPolygonsIntersects(selectedItem, item) || isPolygonsOverlapping(selectedItem, item)) {
+                selectedItem.addIntersection(item);
+                item.addIntersection(selectedItem);
+            } else {
+                selectedItem.deleteIntersection(item);
+                item.deleteIntersection(selectedItem);
             }
-        });
-    }
-    static isPolygonsIntersects(firstPolygon, secondPolygon) {
-        if(firstPolygon.isPolygonWindowIntersects(secondPolygon)) {
-            let previousVertex = secondPolygon.vertices.length - 1;
-            return secondPolygon.vertices.some((item, i, arr) => {
-                let line = MathService.initializeLine(arr[previousVertex], item);
-                if (firstPolygon.isPolygonIntersects(line))
-                    return true;
-                previousVertex = i;
-            });
         }
-    }
-    static isPolygonsOverlapping(firstPolygon, secondPolygon) {
-        let isfirstPolygonInSecondPolygon, isSecondPolygonInFirstPolygon;
-        isfirstPolygonInSecondPolygon = firstPolygon.vertices.some((item) => {
-            return secondPolygon.isPointInPolygon(item.x, item.y);
+    });
+}
+
+export function isPolygonsIntersects(firstPolygon, secondPolygon) {
+    if(firstPolygon.isPolygonWindowIntersects(secondPolygon)) {
+        let previousVertex = secondPolygon.vertices.slice(-1)[0];
+
+        return secondPolygon.vertices.some((vertex) => {
+            const line = MathService.initializeLine(previousVertex, vertex);
+
+            previousVertex = vertex;
+
+            return firstPolygon.isPolygonIntersects(line);
         });
-        isSecondPolygonInFirstPolygon = secondPolygon.vertices.some((item) => {
-            return firstPolygon.isPointInPolygon(item.x, item.y);
-        });
-        return isfirstPolygonInSecondPolygon || isSecondPolygonInFirstPolygon;
-    }
-    static movePolygon(polygon, dx, dy) {
-        polygon.move(dx, dy);
     }
 }
 
-export default PolygonService;
+export function isPolygonsOverlapping(firstPolygon, secondPolygon) {
+    const isfirstPolygonBelongsSecondPolygon = firstPolygon.vertices.some((item) => {
+        return secondPolygon.isPointBelongsThePolygon(item.x, item.y);
+    });
+
+    const isSecondPolygonBelongsFirstPolygon = secondPolygon.vertices.some((item) => {
+        return firstPolygon.isPointBelongsThePolygon(item.x, item.y);
+    });
+
+    return isfirstPolygonBelongsSecondPolygon || isSecondPolygonBelongsFirstPolygon;
+}

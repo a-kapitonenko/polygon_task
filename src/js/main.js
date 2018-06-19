@@ -1,35 +1,40 @@
 import Mouse from './mouse';
 import SelectService from './select.service';
-import PolygonService from './polygon.service';
+import * as PolygonService from './polygon.service';
 
 window.onload = () => {
-    let canvas = document.getElementById("canvas"),
-        ctx = canvas.getContext('2d'),
-        mouse = new Mouse(0 ,0),
-        selectService = new SelectService();
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext('2d');
+    const mouse = new Mouse(0 ,0);
+    const selectService = new SelectService();
+
     canvas.setAttribute('height',window.innerHeight - 20);
     canvas.setAttribute('width',window.innerWidth - 20);
-    let polygons = PolygonService.initializePolygons();
+    
+    const polygons = PolygonService.initializePolygons();
+
     PolygonService.drawPolygons(polygons, canvas, ctx);
 
     canvas.addEventListener('mousedown', (evt) => {
         mouse.x = evt.clientX;
         mouse.y = evt.clientY;
+
         polygons.some((item) => {
-            if(item.isPointInPolygon(mouse.x, mouse.y, item))
+            if (item.isPointBelongsThePolygon(mouse.x, mouse.y, item)) {
                 selectService.selectedItem = item;
+            }
         });
     });
 
     canvas.addEventListener('mousemove', (evt) => {
-        if(selectService.isItemSelected){
-            let indexOfSelectedItem = polygons.indexOf(selectService.selectedItem),
-                item = polygons[indexOfSelectedItem],
-                dx = evt.clientX - mouse.x,
-                dy = evt.clientY - mouse.y;
-            PolygonService.movePolygon(item, dx, dy);
+        if (selectService.isItemSelected) {
+            const dx = evt.clientX - mouse.x;
+            const dy = evt.clientY - mouse.y;
+
+            selectService.selectedItem.move(dx, dy);
             mouse.x = evt.clientX;
             mouse.y = evt.clientY;
+
             PolygonService.drawPolygons(polygons, canvas, ctx);
         }
     });
